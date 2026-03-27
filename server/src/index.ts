@@ -1,7 +1,7 @@
 import { WebSocketServer } from 'ws';
-import { handleClose, handleMessage } from './handlers/handler';
-import { CommandType } from './types/dataStructureType';
-import { clientsStorage } from './db/auth.storage';
+import { handleClose, handleMessage } from './handlers/handler.js';
+import { CommandType } from './types/dataStructureType.js';
+import { clientsStorage } from './db/auth.storage.js';
 
 const PORT = process.env.PORT ? Number.parseInt(process.env.PORT) : 3000;
 

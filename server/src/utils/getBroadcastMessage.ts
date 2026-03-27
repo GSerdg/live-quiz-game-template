@@ -6,7 +6,7 @@ import {
   QuestionResType,
   QuestionResultType,
   ScoreboardType,
-} from '../types/dataStructureType';
+} from '../types/dataStructureType.js';
 
 export const getBroadcastQuestionMessage = (game: Game) => {
   const { text, options, timeLimitSec } = game.questions[game.currentQuestion];

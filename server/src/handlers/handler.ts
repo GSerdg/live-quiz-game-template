@@ -1,17 +1,17 @@
 import { WebSocket } from 'ws';
-import { authService } from '../services/authService';
-import { gameService } from '../services/gameService';
+import { authService } from '../services/authService.js';
+import { gameService } from '../services/gameService.js';
 import {
   AnswerType,
   CommandsStructureType,
   CommandType,
   Question,
   RegDataReqType,
-} from '../types/dataStructureType';
-import { clientsStorage } from '../db/auth.storage';
-import { gameStorage } from '../db/game.storage';
-import { broadcastToGame } from '../utils/broadcastToGame';
-import { allAnsweredCheck } from '../services/gameLifecycle';
+} from '../types/dataStructureType.js';
+import { clientsStorage } from '../db/auth.storage.js';
+import { gameStorage } from '../db/game.storage.js';
+import { broadcastToGame } from '../utils/broadcastToGame.js';
+import { allAnsweredCheck } from '../services/gameLifecycle.js';
 
 export const handleMessage = (
   message: CommandsStructureType,

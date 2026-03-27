@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
-import { Question, Game, User, GameIdentifier } from '../types/dataStructureType';
-import { generateRoomCode } from '../utils/generateRoomCode';
+import { Question, Game, User, GameIdentifier } from '../types/dataStructureType.js';
+import { generateRoomCode } from '../utils/generateRoomCode.js';
 
 export const questionsStorage = {
   _questions: new Map<string, Question[]>(),

@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { WebSocket } from 'ws';
-import { RegDataReqType, User, ClientStorageType } from '../types/dataStructureType';
+import { RegDataReqType, User, ClientStorageType } from '../types/dataStructureType.js';
 
 export const authStorage = {
   _users: new Map<string, User>(),

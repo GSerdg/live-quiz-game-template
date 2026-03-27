@@ -1,11 +1,11 @@
-import { Game } from '../types/dataStructureType';
-import { broadcastToGame } from '../utils/broadcastToGame';
-import { cleanup } from '../utils/cleanup';
+import { Game } from '../types/dataStructureType.js';
+import { broadcastToGame } from '../utils/broadcastToGame.js';
+import { cleanup } from '../utils/cleanup.js';
 import {
   getBroadcastFinishedMessage,
   getBroadcastQuestionMessage,
   getBroadcastResultsMessage,
-} from '../utils/getBroadcastMessage';
+} from '../utils/getBroadcastMessage.js';
 
 export const startQuestionCycle = (game: Game) => {
   game.currentQuestion += 1;

@@ -1,15 +1,15 @@
 import { WebSocket } from 'ws';
-import { authStorage, clientsStorage } from '../db/auth.storage';
-import { gameStorage } from '../db/game.storage';
+import { authStorage, clientsStorage } from '../db/auth.storage.js';
+import { gameStorage } from '../db/game.storage.js';
 import {
   AnswerType,
   CommandsStructureType,
   CommandType,
   CreateGameDataResType,
   Question,
-} from '../types/dataStructureType';
-import { broadcastToGame } from '../utils/broadcastToGame';
-import { allAnsweredCheck, startQuestionCycle } from './gameLifecycle';
+} from '../types/dataStructureType.js';
+import { broadcastToGame } from '../utils/broadcastToGame.js';
+import { allAnsweredCheck, startQuestionCycle } from './gameLifecycle.js';
 
 export const gameService = {
   handleCreateGame(

@@ -1,5 +1,9 @@
-import { authStorage } from '../db/auth.storage';
-import { CommandsStructureType, RegDataResType, RegDataReqType } from '../types/dataStructureType';
+import { authStorage } from '../db/auth.storage.js';
+import {
+  CommandsStructureType,
+  RegDataResType,
+  RegDataReqType,
+} from '../types/dataStructureType.js';
 
 export const authService = {
   handleReg(message: CommandsStructureType<RegDataReqType>): CommandsStructureType<RegDataResType> {

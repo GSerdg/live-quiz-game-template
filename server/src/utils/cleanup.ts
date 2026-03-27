@@ -1,4 +1,4 @@
-import { Game } from '../types/dataStructureType';
+import { Game } from '../types/dataStructureType.js';
 
 export const cleanup = (game: Game) => {
   clearTimeout(game?.timerId);

@@ -1,5 +1,5 @@
-import { clientsStorage } from '../db/auth.storage';
-import { gameStorage } from '../db/game.storage';
+import { clientsStorage } from '../db/auth.storage.js';
+import { gameStorage } from '../db/game.storage.js';
 
 export function broadcastToGame(gameId: string, message: unknown) {
   const game = gameStorage.getGame(gameId);
