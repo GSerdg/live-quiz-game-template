@@ -38,7 +38,7 @@ export const gameStorage = {
   findGameByUserId(userId: string) {
     const games = this._games.values();
 
-    return games.find(game => game.players.some(p => p.index === userId));
+    return Array.from(games).find(game => game.players.some(p => p.index === userId));
   },
 
   getGameStatus({ id, code }: GameIdentifier) {
@@ -79,11 +79,11 @@ export const gameStorage = {
     return { gameId: gameData.id, code: gameData.code };
   },
 
-  joinGame(code: string, user: User) {
-    const id = this._gameCodes.get(code) ?? '';
-    const game = this._games.get(id);
+  joinGame(code: string, user: User, id: number) {
+    const gameId = this._gameCodes.get(code) ?? '';
+    const game = this._games.get(gameId);
 
-    if (!id || !game) throw new Error('Join game error: game not found');
+    if (!game) throw new Error('Join game error: game not found', { cause: { id } });
 
     const { name, index } = user;
 

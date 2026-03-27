@@ -19,11 +19,11 @@ export const gameService = {
     const { data } = message;
     const hostId = clientsStorage.getClient(ws)?.userId;
 
-    if (!hostId) throw new Error('User id not found');
+    if (!hostId) throw new Error('User is not authenticated', { cause: { id: message.id } });
 
     const responseData = gameStorage.createGame(data.questions, hostId);
 
-    return { ...message, data: responseData };
+    return { type: CommandType.GAME_CREATED, data: responseData, id: message.id };
   },
 
   handleJoinGame(
@@ -34,18 +34,24 @@ export const gameService = {
     const client = clientsStorage.getClient(ws);
     const user = authStorage.getUser(client?.userName ?? '');
 
-    if (!client || !user) throw new Error('User id not found');
+    if (!user) throw new Error('User is not authenticated', { cause: { id: message.id } });
     if (gameStorage.getGameStatus({ code: data.code }) !== 'waiting') {
-      throw new Error('User can not join to game');
+      throw new Error('Cannot join: game already started or invalid room code', {
+        cause: { id: message.id },
+      });
     }
 
-    const { gameId, playerName, playerCount, players } = gameStorage.joinGame(data.code, user);
+    const { gameId, /* playerName, playerCount, */ players } = gameStorage.joinGame(
+      data.code,
+      user,
+      message.id
+    );
 
-    const broadcastJoinedMessage = {
-      type: CommandType.PLAYER_JOINED,
-      data: { playerName, playerCount },
-      id: 0,
-    };
+    // const broadcastJoinedMessage = {
+    //   type: CommandType.PLAYER_JOINED,
+    //   data: { playerName, playerCount },
+    //   id: 0,
+    // };
 
     const playersData = players.map(({ name, index, score }) => ({ name, index, score }));
     const broadcastUpdatePlayersMessage = {
@@ -54,7 +60,8 @@ export const gameService = {
       id: 0,
     };
 
-    broadcastToGame(gameId, broadcastJoinedMessage);
+    // Закомментировано из-за некорректной обработки клиентом двойной рассылки. Если клиент исправят можно вернуть
+    // broadcastToGame(gameId, broadcastJoinedMessage);
     broadcastToGame(gameId, broadcastUpdatePlayersMessage);
 
     return { type: CommandType.GAME_JOINED, data: { gameId }, id };
@@ -64,14 +71,15 @@ export const gameService = {
     const { data } = message;
     const clientId = clientsStorage.getClient(ws)?.userId;
 
-    if (!clientId) throw new Error('User id not found');
+    if (!clientId) throw new Error('User is not authenticated', { cause: { id: message.id } });
     if (gameStorage.getGameStatus({ id: data.gameId }) !== 'waiting') {
-      throw new Error('User can not start game');
+      throw new Error('Unable to start: game already started', { cause: { id: message.id } });
     }
 
     const game = gameStorage.getGame(data.gameId);
 
-    if (clientId !== game?.hostId) throw new Error('Only host can start game');
+    if (clientId !== game?.hostId)
+      throw new Error('Only host can start game', { cause: { id: message.id } });
 
     game.status = 'in_progress';
     startQuestionCycle(game);
@@ -85,18 +93,20 @@ export const gameService = {
     const player = gameStorage.getPlayer(data.gameId, clientId ?? '');
     const game = gameStorage.getGame(data.gameId);
 
-    if (!player) throw new Error('User id not found');
-    if (!game) throw new Error('Game not found');
+    if (!player) throw new Error('User is not authenticated', { cause: { id: message.id } });
+    if (!game) throw new Error('Game not found', { cause: { id: message.id } });
     if (gameStorage.getGameStatus({ id: data.gameId }) !== 'in_progress') {
-      throw new Error('Not have started game');
+      throw new Error('Not have started game', { cause: { id: message.id } });
     }
-    if (data.questionIndex !== game.currentQuestion) throw new Error('question index error');
+    if (data.questionIndex !== game.currentQuestion) {
+      throw new Error('question index error', { cause: { id: message.id } });
+    }
 
     const question = game.questions[data.questionIndex];
     const correctAnswerIndex = question.correctIndex;
     const timeRemaining = Math.max(
       0,
-      Math.round(question.timeLimitSec - (Date.now() - game.currentQuestionStartTime) / 1000)
+      question.timeLimitSec - (Date.now() - game.currentQuestionStartTime) / 1000
     );
 
     player.hasAnswered = true;
@@ -104,7 +114,7 @@ export const gameService = {
     game.answersCount += 1;
 
     if (data.answerIndex === correctAnswerIndex) {
-      const score = BASE_POINTS * (timeRemaining / question.timeLimitSec);
+      const score = Math.round(BASE_POINTS * (timeRemaining / question.timeLimitSec));
 
       player.lastAnswerPoints = score;
       player.score += score;

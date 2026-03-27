@@ -1,5 +1,6 @@
 import { Game } from '../types/dataStructureType';
 import { broadcastToGame } from '../utils/broadcastToGame';
+import { cleanup } from '../utils/cleanup';
 import {
   getBroadcastFinishedMessage,
   getBroadcastQuestionMessage,
@@ -39,14 +40,15 @@ export const finishGame = (game: Game) => {
 export const sendAnswer = (game: Game) => {
   const broadcastResultsMessage = getBroadcastResultsMessage(game);
   broadcastToGame(game.id, broadcastResultsMessage);
+
+  cleanup(game);
 };
 
 export const allAnsweredCheck = (game: Game) => {
+  console.log('first', game.answersCount, game.players.length);
   if (game.answersCount >= game.players.length) {
-    clearTimeout(game?.timerId);
-    game.timerId = undefined;
-
     sendAnswer(game);
+
     setTimeout(() => startQuestionCycle(game), 5000);
   }
 };

@@ -1,4 +1,4 @@
-interface Player {
+export interface Player {
   name: string;
   index: number | string; // unique player id
   score: number;

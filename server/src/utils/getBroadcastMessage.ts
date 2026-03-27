@@ -27,7 +27,7 @@ export const getBroadcastQuestionMessage = (game: Game) => {
 };
 
 export const getBroadcastResultsMessage = (game: Game) => {
-  const correctAnswerIndex = game.questions[game.currentQuestion].correctIndex;
+  const correctAnswerIndex = game.questions[game.currentQuestion]?.correctIndex;
 
   const playerResults: PlayerResultType[] = game.players.map(player => ({
     name: player.name,

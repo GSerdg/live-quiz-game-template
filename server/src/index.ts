@@ -31,7 +31,21 @@ wss.on('connection', ws => {
       }
     } catch (e) {
       const err = e as Error;
+      let id = '';
+      if (err.cause && typeof err.cause === 'object' && 'id' in err.cause) {
+        id = (err.cause as { id: string }).id;
+      }
       console.error(err.message);
+
+      ws.send(
+        JSON.stringify({
+          type: 'error',
+          id,
+          data: {
+            message: err.message,
+          },
+        })
+      );
     }
   });
 
